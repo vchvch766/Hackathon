@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Volunteer Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* ================= BASE ================= */
+body{
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:#0b0f1a;
+  color:white;
+}
+
+/* ================= NAVBAR ================= */
+header{
+  position:sticky;
+  top:15px;
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+  padding:10px 0;
+}
+
+.navbar{
+  width:92%;
+  max-width:1200px;
+  padding:14px 20px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;
+}
+
+/* LOGO */
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  flex-shrink:0;
+}
+
+.logo img{
+  height:36px;
+}
+
+/* NAV */
+nav{
+  display:flex;
+  gap:22px;
+  flex:1;
+  justify-content:center;
+}
+
+nav a{
+  text-decoration:none;
+  color:rgba(255,255,255,0.75);
+}
+
+nav a:hover{
+  color:#4da6ff;
+}
+
+/* CTA */
+.cta-btn{
+  padding:10px 16px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ff4d4d,#ff1a1a);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* HAMBURGER */
+.menu-toggle{
+  display:none;
+  font-size:28px;
+  cursor:pointer;
+}
+
+/* ================= FILTER BAR ================= */
+.filters-bar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding:20px 8%;
+  flex-wrap:wrap;
+}
+
+select, button.view-btn{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:#111827;
+  color:white;
+  cursor:pointer;
+}
+
+/* ================= GRID VIEW ================= */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  padding:20px 8%;
+}
+
+/* ================= TILE VIEW ================= */
+.tiles{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:20px 8%;
+}
+
+.tile-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+/* ================= CARD ================= */
+.card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:18px;
+  border-radius:14px;
+}
+
+.badge{
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+.high{background:#7f1d1d;}
+.medium{background:#713f12;}
+.low{background:#14532d;}
+
+.pending{color:#facc15;}
+.accepted{color:#4da6ff;}
+.completed{color:#22c55e;}
+
+button{
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#ff4d4d,#ff1a1a);
+  color:white;
+}
+
+/* ================= MODAL ================= */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content{
+  width:90%;
+  max-width:600px;
+  background:#0f172a;
+  padding:20px;
+  border-radius:12px;
+}
+
+.close{
+  float:right;
+  cursor:pointer;
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:900px){
+  nav{
+    display:none;
+    position:absolute;
+    top:70px;
+    right:20px;
+    flex-direction:column;
+    background:rgba(255,255,255,0.08);
+    padding:15px;
+    border-radius:12px;
+  }
+
+  nav.active{display:flex;}
+
+  .menu-toggle{
+    display:block;
+    color:white;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header>
+  <div class="navbar">
+
+    <div class="logo">
+      <img src="https://sdgs.un.org/sites/default/files/2020-07/SDG%20Wheel_Transparent.png">
+      Disaster Relief
+    </div>
+
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+    <nav id="navMenu">
+      <a href="index.html">Home</a>
+      <a href="request.html">Help</a>
+      <a href="volunteer.html">Volunteer</a>
+      <a href="#">Track</a>
+    </nav>
+
+    <button class="cta-btn">Connect</button>
+
+  </div>
+</header>
+
+<!-- ================= FILTERS + VIEW ================= -->
+<div class="filters-bar">
+
+  <select id="filterType" onchange="applyFilters()">
+    <option value="">All Types</option>
+    <option value="food">Food</option>
+    <option value="medical">Medical</option>
+    <option value="rescue">Rescue</option>
+    <option value="shelter">Shelter</option>
+  </select>
+
+  <select id="filterStatus" onchange="applyFilters()">
+    <option value="">All Status</option>
+    <option value="pending">Pending</option>
+    <option value="accepted">Accepted</option>
+    <option value="completed">Completed</option>
+  </select>
+
+  <button class="view-btn" onclick="setView('grid')">Grid View</button>
+  <button class="view-btn" onclick="setView('tiles')">Tile View</button>
+
+</div>
+
+<!-- ================= DATA ================= -->
+<div id="grid"></div>
+
+<!-- ================= MODAL ================= -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+
+    <h2 id="mTitle"></h2>
+    <p id="mLocation"></p>
+    <p id="mDesc"></p>
+    <p>Status: <span id="mStatus"></span></p>
+
+    <button onclick="updateStatus('accepted')">Accepted</button>
+    <button onclick="updateStatus('completed')">Completed</button>
+  </div>
+</div>
+
+<script>
+
+function toggleMenu(){
+  document.getElementById("navMenu").classList.toggle("active");
+}
+
+/* ================= DATA ================= */
+let viewMode = "grid";
+
+let requests = [
+  {id:1,name:"Rahul",location:"Kolkata",type:"food",urgency:"high",status:"pending",desc:"Need food urgently"},
+  {id:2,name:"Anita",location:"Howrah",type:"medical",urgency:"medium",status:"accepted",desc:"Medical help needed"}
+];
+
+let selected=null;
+
+/* ================= VIEW ================= */
+function setView(mode){
+  viewMode = mode;
+  render(requests);
+}
+
+/* ================= FILTER ================= */
+function applyFilters(){
+
+  let type=document.getElementById("filterType").value;
+  let status=document.getElementById("filterStatus").value;
+
+  let filtered=requests.filter(r=>
+    (!type||r.type===type)&&(!status||r.status===status)
+  );
+
+  render(filtered);
+}
+
+/* ================= RENDER ================= */
+function render(data){
+
+  const grid=document.getElementById("grid");
+
+  grid.className = (viewMode === "tiles") ? "tiles" : "grid";
+
+  grid.innerHTML="";
+
+  data.forEach(r=>{
+
+    if(viewMode==="tiles"){
+      grid.innerHTML+=`
+        <div class="tile-card">
+          <div>
+            <b>${r.name}</b><br>
+            <small>${r.location}</small>
+          </div>
+
+          <div>${r.type} | ${r.status}</div>
+
+          <button onclick="openModal(${r.id})">View</button>
+        </div>
+      `;
+    } else {
+      grid.innerHTML+=`
+        <div class="card">
+          <h3>${r.name}</h3>
+          <p>${r.location}</p>
+
+          <span class="badge ${r.urgency}">${r.urgency}</span>
+
+          <p class="${r.status}">${r.status}</p>
+          <p>${r.desc}</p>
+
+          <button onclick="openModal(${r.id})">View</button>
+        </div>
+      `;
+    }
+  });
+}
+
+/* ================= MODAL ================= */
+function openModal(id){
+  selected=requests.find(r=>r.id===id);
+
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("mTitle").innerText=selected.name;
+  document.getElementById("mLocation").innerText=selected.location;
+  document.getElementById("mDesc").innerText=selected.desc;
+  document.getElementById("mStatus").innerText=selected.status;
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+/* ================= UPDATE ================= */
+function updateStatus(status){
+  selected.status=status;
+  document.getElementById("mStatus").innerText=status;
+  render(requests);
+}
+
+/* INIT */
+render(requests);
+
+</script>
+
+</body>
+</html>

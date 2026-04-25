@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Status Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:#0b0f1a;
+  color:white;
+}
+
+/* HEADER */
+header{
+  padding:20px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+h1{
+  font-size:1.4rem;
+}
+
+select{
+  padding:8px;
+  border-radius:8px;
+  background:#111827;
+  color:white;
+  border:none;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  padding:20px 8%;
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:16px;
+  border-radius:14px;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* STATUS */
+.status{
+  font-weight:bold;
+}
+
+.pending{color:#facc15;}
+.accepted{color:#4da6ff;}
+.completed{color:#22c55e;}
+
+/* BADGES */
+.badge{
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-block;
+}
+
+.high{background:#7f1d1d;}
+.medium{background:#713f12;}
+.low{background:#14532d;}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🚨 Live Request Tracker</h1>
+
+  <select id="filter">
+    <option value="">All</option>
+    <option value="pending">Pending</option>
+    <option value="accepted">Accepted</option>
+    <option value="completed">Completed</option>
+  </select>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+
+let allRequests = [];
+
+/* FETCH DATA FROM NEON API */
+async function fetchRequests(){
+  const res = await fetch("https://your-api.com/api/requests");
+  const data = await res.json();
+
+  allRequests = data;
+  render(data);
+}
+
+/* RENDER UI */
+function render(data){
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  data.forEach(r=>{
+    grid.innerHTML += `
+      <div class="card">
+        <h3>${r.name}</h3>
+        <p>📍 ${r.location}</p>
+
+        <span class="badge ${r.urgency}">${r.urgency}</span>
+
+        <p class="status ${r.status}">
+          Status: ${r.status.toUpperCase()}
+        </p>
+
+        <p>${r.help_type}</p>
+      </div>
+    `;
+  });
+}
+
+/* FILTER */
+document.getElementById("filter").onchange = function(){
+  const value = this.value;
+
+  if(!value){
+    render(allRequests);
+  } else {
+    render(allRequests.filter(r=>r.status === value));
+  }
+};
+
+/* LIVE UPDATE EVERY 3 SEC */
+fetchRequests();
+setInterval(fetchRequests, 3000);
+
+</script>
+
+</body>
+</html>

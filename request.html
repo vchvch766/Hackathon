@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request Help</title>
+<style>
+  /* ================= BASE ================= */
+  body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: #0b0f1a;
+    color: white;
+  }
+
+  /* ================= HEADER ================= */
+  header {
+    position: sticky;
+    top: 15px;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+  }
+
+  .navbar {
+    width: 92%;
+    max-width: 1200px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    position: relative;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+
+  .logo img {
+    height: 36px;
+  }
+
+  nav {
+    display: flex;
+    gap: 22px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.75);
+    transition: 0.3s;
+    white-space: nowrap;
+  }
+
+  nav a:hover {
+    color: #4da6ff;
+  }
+
+  .cta-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg,#ff4d4d,#ff1a1a);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .menu-toggle {
+    display: none;
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  /* ================= FORM ================= */
+  .wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 650px;
+    padding: 30px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: white;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+  }
+
+  .urgency-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .urgency-group input {
+    display: none;
+  }
+
+  .urgency-group label {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    transition: 0.3s;
+  }
+
+  #low:checked + label { background: #14532d; border-color: #22c55e; }
+  #med:checked + label { background: #713f12; border-color: #facc15; }
+  #high:checked + label { background: #7f1d1d; border-color: #ef4444; }
+
+  button {
+    margin-top: 15px;
+    background: linear-gradient(45deg,#ff4d4d,#ff1a1a);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+
+  /* ================= MOBILE ================= */
+  @media(max-width:900px){
+    .menu-toggle { display: block; }
+    nav {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      flex-direction: column;
+      width: 200px;
+      padding: 15px;
+      background: rgba(255,255,255,0.08);
+      display: none;
+      border-radius: 12px;
+    }
+    nav.active { display: flex; }
+    .cta-btn { display: none; }
+    .row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <div class="logo">
+      <img src="https://sdgs.un.org/sites/default/files/2020-07/SDG%20Wheel_Transparent.png" alt="Logo">
+      Disaster Relief
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <nav id="navMenu">
+      <a href="#">Home</a>
+      <a href="#">Help</a>
+      <a href="#">Volunteer</a>
+      <a href="#">Track</a>
+    </nav>
+    <button class="cta-btn">Connect</button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="card">
+    <h1>Request Help</h1>
+    <form id="requestForm">
+      <div class="row">
+        <input type="text" name="name" placeholder="Your Name">
+        <label class="toggle">
+          <input type="checkbox" name="anonymous"> Anonymous
+        </label>
+      </div>
+      <input type="text" name="location" placeholder="Full Location" required>
+      <input type="text" name="locality" placeholder="City / District">
+      <select name="help_type">
+        <option>Food</option>
+        <option>Medical</option>
+        <option>Rescue</option>
+        <option>Shelter</option>
+      </select>
+      <div class="urgency-group">
+        <input type="radio" id="low" name="urgency" value="low">
+        <label for="low">Low</label>
+        <input type="radio" id="med" name="urgency" value="medium">
+        <label for="med">Medium</label>
+        <input type="radio" id="high" name="urgency" value="high">
+        <label for="high">High</label>
+      </div>
+      <button type="submit">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("active");
+  }
+
+  const form = document.getElementById('requestForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+      name: form.name.value,
+      location: form.location.value,
+      locality: form.locality.value,
+      help_type: form.help_type.value,
+      urgency: form.urgency.value,
+      anonymous: form.anonymous.checked
+    };
+    try {
+      const res = await fetch('http://localhost:5000/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if(res.ok) {
+        alert('Request submitted successfully!');
+        form.reset();
+      } else alert('Submission failed.');
+    } catch(err) {
+      console.error(err);
+      alert('Server error.');
+    }
+  });
+</script>
+
+</body>
+</html>
